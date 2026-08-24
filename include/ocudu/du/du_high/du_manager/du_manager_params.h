@@ -10,6 +10,7 @@
 #include "ocudu/du/du_high/du_qos_config.h"
 #include "ocudu/du/du_high/du_srb_config.h"
 #include "ocudu/du/du_high/du_test_mode_config.h"
+#include "ocudu/du/du_high/phy_cell_start_callback.h"
 #include "ocudu/f1ap/du/f1ap_du.h"
 #include "ocudu/f1u/du/f1u_gateway.h"
 #include "ocudu/mac/mac_manager.h"
@@ -89,6 +90,8 @@ struct du_manager_params {
     /// Interface to configure the MAC layer.
     mac_manager&            mgr;
     scheduler_expert_config sched_cfg;
+    /// If set, run before starting the MAC cell (e.g. FAPI P5 start procedure for split-6).
+    phy_cell_start_callback* phy_cell_start_cb = nullptr;
   };
 
   struct metrics_config_params {

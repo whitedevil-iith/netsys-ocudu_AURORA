@@ -10,6 +10,7 @@
 #include "ocudu/du/du_high/du_qos_config.h"
 #include "ocudu/du/du_high/du_srb_config.h"
 #include "ocudu/du/du_high/du_test_mode_config.h"
+#include "ocudu/du/du_high/phy_cell_start_callback.h"
 #include "ocudu/f1ap/du/f1ap_du.h"
 #include "ocudu/f1ap/gateways/f1c_connection_client.h"
 #include "ocudu/gtpu/gtpu_teid_pool.h"
@@ -109,6 +110,8 @@ struct du_high_dependencies {
   /// deployments that apply no Doppler compensation, in which case the computed values are simply not applied. It
   /// must outlive the DU-high.
   ocudu_ntn::ntn_doppler_compensation_handler* ntn_doppler_handler = nullptr;
+  /// If set, run before starting each MAC cell (e.g. FAPI P5 start procedure for split-6).
+  phy_cell_start_callback* phy_cell_start_cb = nullptr;
 };
 
 } // namespace odu

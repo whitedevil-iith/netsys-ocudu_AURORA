@@ -238,6 +238,7 @@ du_cell_manager::handle_cell_reconf_request(const du_cell_param_config_request& 
 async_task<bool> du_cell_manager::start(du_cell_index_t cell_index) const
 {
   return launch_async([this, cell_index](coro_context<async_task<bool>>& ctx) {
+    bool phy_ok = false;
     CORO_BEGIN(ctx);
     if (!has_cell(cell_index)) {
       logger.warning("cell={}: Start called for a cell that does not exist.", cell_index);
@@ -258,6 +259,15 @@ async_task<bool> du_cell_manager::start(du_cell_index_t cell_index) const
     // active.
     if (cells[cell_index]->live_barred != cells[cell_index]->cfg.cell_barred) {
       CORO_AWAIT(set_cell_barred(cell_index, cells[cell_index]->cfg.cell_barred));
+    }
+
+    // Run PHY cell start (e.g. FAPI P5 procedure for split-6) before starting the MAC cell.
+    if (cfg.mac.phy_cell_start_cb) {
+      CORO_AWAIT_VALUE(phy_ok, cfg.mac.phy_cell_start_cb->run(cell_index));
+      if (!phy_ok) {
+        logger.warning("cell={}: PHY cell start failed.", fmt::underlying(cell_index));
+        CORO_EARLY_RETURN(false);
+      }
     }
 
     // Start cell in the MAC.

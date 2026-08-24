@@ -9,6 +9,7 @@
 #include "ocudu/du/du_high/du_manager/du_f1_setup_notifier.h"
 #include "ocudu/du/du_high/o_du_high.h"
 #include "ocudu/du/du_high/o_du_high_config.h"
+#include "ocudu/du/du_high/phy_cell_start_callback.h"
 #include "ocudu/du/du_operation_controller.h"
 #include "ocudu/e2/e2.h"
 #include "ocudu/fapi_adaptor/mac/mac_fapi_fastpath_adaptor.h"
@@ -62,6 +63,11 @@ public:
   /// Returns the DU metrics notifier of this O-DU high implementation.
   du_metrics_notifier& get_du_metrics_notifier() { return metrics_notifier_poxy; }
 
+  /// Sets the PHY cell start callback (e.g. FAPI P5 procedure for split-6). Must outlive the DU high.
+  void set_phy_cell_start_callback(std::unique_ptr<phy_cell_start_callback> cb);
+  /// Returns the PHY cell start callback, or nullptr if not set.
+  phy_cell_start_callback* get_phy_cell_start_callback() { return phy_cell_start_cb_.get(); }
+
 private:
   const unsigned                                           nof_cells;
   ocudulog::basic_logger&                                  logger;
@@ -71,6 +77,7 @@ private:
   std::unique_ptr<du_high>                                 du_hi;
   std::unique_ptr<e2_agent>                                e2agent;
   std::unique_ptr<du_f1_setup_complete_notifier>           f1_setup_e2_adapter;
+  std::unique_ptr<phy_cell_start_callback>                 phy_cell_start_cb_;
 };
 
 } // namespace odu

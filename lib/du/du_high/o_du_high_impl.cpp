@@ -112,3 +112,8 @@ void o_du_high_impl::set_e2_components(std::unique_ptr<e2_agent>                
   ocudu_assert(e2agent, "Invalid E2 agent");
   ocudu_assert(f1_setup_e2_adapter, "Invalid F1 setup E2 adapter");
 }
+
+void o_du_high_impl::set_phy_cell_start_callback(std::unique_ptr<phy_cell_start_callback> cb)
+{
+  phy_cell_start_cb_ = std::move(cb);
+}

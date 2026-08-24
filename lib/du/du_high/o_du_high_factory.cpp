@@ -9,16 +9,41 @@
 #include "ocudu/du/du_high/du_high_clock_controller.h"
 #include "ocudu/du/du_high/du_high_factory.h"
 #include "ocudu/du/du_high/o_du_high_config.h"
+#include "ocudu/du/du_high/phy_cell_start_callback.h"
 #include "ocudu/e2/e2_du_factory.h"
 #include "ocudu/fapi_adaptor/mac/mac_fapi_fastpath_adaptor_factory.h"
+#include "ocudu/fapi_adaptor/mac/mac_fapi_sector_fastpath_adaptor.h"
+#include "ocudu/fapi_adaptor/mac/p5/mac_fapi_p5_sector_fastpath_adaptor.h"
 #include "ocudu/fapi_adaptor/precoding_codebook_generator.h"
 #include "ocudu/fapi_adaptor/uci_part2_correspondence_generator.h"
+#include "ocudu/mac/phy_cell_operation_controller.h"
 #include "ocudu/ran/band_helper.h"
 #include "ocudu/ran/ssb/ssb_mapping.h"
 #include "ocudu/support/ocudu_assert.h"
 
 using namespace ocudu;
 using namespace odu;
+
+namespace {
+
+class phy_cell_start_callback_impl : public phy_cell_start_callback
+{
+  o_du_high_impl* odu_ptr;
+
+public:
+  explicit phy_cell_start_callback_impl(o_du_high_impl* odu) : odu_ptr(odu) {}
+
+  async_task<bool> run(du_cell_index_t cell_index) override
+  {
+    return odu_ptr->get_mac_fapi_fastpath_adaptor()
+        .get_sector_adaptor(static_cast<unsigned>(cell_index))
+        .get_p5_sector_fastpath_adaptor()
+        .get_operation_controller()
+        .start();
+  }
+};
+
+} // namespace
 
 static fapi_adaptor::mac_fapi_p5_sector_fastpath_adaptor_dependencies
 generate_mac_fapi_p5_sector_adaptor_dependencies(const o_du_high_sector_dependencies& sector_dependencies)
@@ -162,6 +187,8 @@ std::unique_ptr<o_du_high> ocudu::odu::make_o_du_high(const o_du_high_config&  c
   // Resolve dependencies for DU-high.
   odu_dependencies.du_hi.phy_adapter = &odu->get_mac_result_notifier();
   odu_dependencies.du_hi.du_notifier = &odu->get_du_metrics_notifier();
+  odu->set_phy_cell_start_callback(std::make_unique<phy_cell_start_callback_impl>(odu.get()));
+  odu_dependencies.du_hi.phy_cell_start_cb = odu->get_phy_cell_start_callback();
 
   if (!odu_dependencies.e2_client) {
     odu->set_du_high(make_du_high(du_hi_cfg, odu_dependencies.du_hi));
