@@ -1,0 +1,4 @@
+[submodule "plugins/aerial"]
+	path = plugins/aerial
+	url = https://gitlab.com/ocudu/work_groups/wg1_hw_accel/aerial_l1_ocudu_plugin.git
+	branch = aerial-l1-fapi-adaptor
