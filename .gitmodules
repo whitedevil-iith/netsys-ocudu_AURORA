@@ -2,3 +2,11 @@
 	path = plugins/aerial
 	url = https://gitlab.com/ocudu/work_groups/wg1_hw_accel/aerial_l1_ocudu_plugin.git
 	branch = main
+
+[submodule "Metrics"]
+	path = Metrics
+	url = git@github.com:netsys-edinburgh/Metrics.git
+
+[submodule "campus5g-ng"]
+	path = campus5g-ng
+	url = git@github.com:netsys-edinburgh/campus5g-ng.git
