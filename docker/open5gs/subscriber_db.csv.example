@@ -1,6 +1,6 @@
 #
 # .csv to store UE's information in HSS
-# Kept in the following format: "Name,IMSI,Key,OP_Type,OP/OPc,AMF,QCI,IP_alloc"
+# Kept in the following format: "Name,IMSI,Key,OP_Type,OP/OPc,AMF,QCI,IP_alloc[,DNN,AccessRestriction,SST,SDs]"
 #
 # Name:     Human readable name to help distinguish UE's. Ignored by the HSS
 # IMSI:     UE's IMSI value
@@ -10,6 +10,12 @@
 # AMF:      Authentication management field, stored in hexadecimal
 # QCI:      QoS Class Identifier for the UE's default bearer.
 # IP_alloc: Statically assigned IP for the UE.
+# DNN:      Optional data network name. Defaults to "internet".
+# AccessRestriction: Optional Open5GS access_restriction_data. Defaults to 32.
+# SST:      Optional slice/service type. Defaults to 1.
+# SDs:      Optional slice differentiators, hex without a 0x prefix. Several
+#           values are separated by "|", for example "ffffff|19cde1". The first
+#           is the default slice. Omit this field for an SST-only subscription.
 #
 # Note: Lines starting by '#' are ignored and will be overwritten
 # List of UEs with IMSI, and key increasing by one for each new UE. Useful for testing with AmariUE simulator and ue_count option

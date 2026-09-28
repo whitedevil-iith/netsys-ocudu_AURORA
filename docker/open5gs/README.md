@@ -28,7 +28,7 @@ In [open5gs.env](open5gs.env) the following parameters can be set:
 - DEBUG (default: false): This can be set to true to run Open5GS in debug mode.
 
 ```csv
-# Kept in the following format: "Name,IMSI,Key,OP_Type,OP/OPc,AMF,QCI,IP_alloc"
+# Kept in the following format: "Name,IMSI,Key,OP_Type,OP/OPc,AMF,QCI,IP_alloc[,DNN,AccessRestriction,SST,SDs]"
 #
 # Name:     Human readable name to help distinguish UE's. Ignored by the HSS
 # IMSI:     UE's IMSI value
@@ -40,6 +40,12 @@ In [open5gs.env](open5gs.env) the following parameters can be set:
 # IP_alloc: IP allocation stratagy for the SPGW.
 #           With 'dynamic' the SPGW will automatically allocate IPs
 #           With a valid IPv4 (e.g. '10.45.0.2') the UE will have a statically assigned IP.
+# DNN:      Optional data network name. Defaults to "internet".
+# AccessRestriction: Optional Open5GS access_restriction_data. Defaults to 32.
+# SST:      Optional slice/service type. Defaults to 1.
+# SDs:      Optional slice differentiators, hex without a 0x prefix. Several
+#           values are separated by "|", for example "ffffff|19cde1". The first
+#           is the default slice. Omit this field for an SST-only subscription.
 #
 # Note: Lines starting by '#' are ignored and will be overwritten
 # List of UEs with IMSI, and key increasing by one for each new UE. Useful for testing with AmariUE simulator and ue_count option
