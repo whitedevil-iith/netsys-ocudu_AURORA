@@ -1,4 +1,4 @@
 [submodule "plugins/aerial"]
 	path = plugins/aerial
-	url = https://gitlab.com/ocudu/work_groups/wg1_hw_accel/aerial_l1_ocudu_plugin.git
-	branch = aerial-l1-fapi-adaptor
+	url = ssh://git@gitlab-master.nvidia.com:12051/gputelecom/aerial-l1-plugin.git
+	branch = update/Rel_26-2
