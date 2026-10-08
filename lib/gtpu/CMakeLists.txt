@@ -24,4 +24,5 @@ target_link_libraries(ocudu_gtpu
   ocudu_nru
   ocudu_psup
   ocudu_support
+  ocudu_aurora
 )
