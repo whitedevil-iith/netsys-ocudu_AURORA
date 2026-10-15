@@ -26,6 +26,10 @@ In [open5gs.env](open5gs.env) the following parameters can be set:
 - OPEN5GS_IP: This must be set to the IP of the container (here: 10.53.1.2).
 - UE_IP_BASE: Defines the IP base used for connected UEs (here: 10.45.0).
 - DEBUG (default: false): This can be set to true to run Open5GS in debug mode.
+- MME_CIPHERING_ORDER (default: `[EEA0, EEA1, EEA2]`): MME ciphering algorithm order.
+- AMF_CIPHERING_ORDER (default: `[NEA0, NEA1, NEA2]`): AMF ciphering algorithm order.
+- AMF_S_NSSAI (default: `[{sst: 1}]`): S-NSSAIs served by the AMF, as a YAML flow sequence.
+- NSSF_NSI (default: `[{uri: http://127.0.0.10:7777, s_nssai: {sst: 1}}]`): NSSF network slice instances, as a YAML flow sequence.
 
 ```csv
 # Kept in the following format: "Name,IMSI,Key,OP_Type,OP/OPc,AMF,QCI,IP_alloc[,DNN,AccessRestriction,SST,SDs]"
