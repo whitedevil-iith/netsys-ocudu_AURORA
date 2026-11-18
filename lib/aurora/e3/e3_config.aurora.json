@@ -1,0 +1,64 @@
+{
+  "_comment": "aerial-sample-apps dApp e3_config.json with the cuBB L1 agent and the AURORA agent of an OCUDU DU. Set NVIDIA_L1.enabled to false (and deployment.shared_memory.required to false) for an AURORA-only dApp.",
+  "deployment": {
+    "ipc_mode": "container:nv-cubb",
+    "shared_memory": {
+      "key": "/e3_ran_buffers",
+      "required": true
+    }
+  },
+  "application": {
+    "name": "AURORA anomaly detection",
+    "version": "1.0.0",
+    "vendor": "netsys",
+    "results_pub_port": 5559,
+    "enable_results_publishing": true
+  },
+  "e3_manager": {
+    "dapp_client_endpoint": "tcp://*:5558",
+    "e3_agents": [
+      {
+        "name": "NVIDIA_L1",
+        "enabled": true,
+        "host": "127.0.0.1",
+        "agent_rep_port": 5555,
+        "agent_pub_port": 5556,
+        "agent_sub_port": 5557,
+        "auto_setup": true,
+        "subscription_options": {
+          "auto_subscribe": true,
+          "telemetry_ids": [4, 5, 6, 7, 33, 18, 19, 39],
+          "control_ids": [],
+          "ran_function_id": 2,
+          "periodicity_us": 100000,
+          "subscription_time_s": 0
+        },
+        "comment": "NVIDIA L1 E3 Agent (cuBB)"
+      },
+      {
+        "name": "OCUDU_DU",
+        "enabled": true,
+        "host": "127.0.0.1",
+        "agent_rep_port": 9990,
+        "agent_pub_port": 9991,
+        "agent_sub_port": 9999,
+        "auto_setup": true,
+        "subscription_options": {
+          "auto_subscribe": true,
+          "telemetry_ids": [1, 3, 4, 5, 7, 10, 12, 13],
+          "control_ids": [],
+          "ran_function_id": 100,
+          "periodicity_us": 100000,
+          "subscription_time_s": 0
+        },
+        "comment": "OCUDU DU AURORA E3 Agent (AURORA_KPM service model, lib/aurora/e3/README.md)"
+      }
+    ],
+    "subscription_response_timeout_s": 10,
+    "debug_enabled": false
+  },
+  "logging": {
+    "directory": "/logs",
+    "e3_manager_log": "e3_manager.log"
+  }
+}

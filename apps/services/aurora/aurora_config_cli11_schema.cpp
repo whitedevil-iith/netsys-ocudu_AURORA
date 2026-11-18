@@ -47,4 +47,17 @@ void ocudu::app_services::configure_cli11_with_aurora_config_schema(CLI::App& ap
       "--cpus",
       [&config](const std::string& value) { parse_affinity_mask(config.cpus, value, "cpus"); },
       "CPUs of the AURORA publisher thread. Default: the main thread pool CPUs");
+  add_option(*sub, "--e3_enable", config.e3_enabled, "Enable the E3 agent (AURORA_KPM service model for dApps)")
+      ->capture_default_str();
+  add_option(*sub, "--e3_bind_addr", config.e3_bind_address, "Bind address of the E3 sockets (\"*\" = all)")
+      ->capture_default_str();
+  add_option(*sub, "--e3_rep_port", config.e3_rep_port, "E3 setup port (REQ/REP)")
+      ->capture_default_str()
+      ->check(CLI::Range(1, 65535));
+  add_option(*sub, "--e3_pub_port", config.e3_pub_port, "E3 indication port (PUB)")
+      ->capture_default_str()
+      ->check(CLI::Range(1, 65535));
+  add_option(*sub, "--e3_sub_port", config.e3_sub_port, "E3 subscription/control port (SUB)")
+      ->capture_default_str()
+      ->check(CLI::Range(1, 65535));
 }

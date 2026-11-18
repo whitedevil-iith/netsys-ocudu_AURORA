@@ -2,6 +2,7 @@
 
 #include "apps/services/worker_manager/os_sched_affinity_manager.h"
 #include <chrono>
+#include <cstdint>
 #include <string>
 
 namespace ocudu {
@@ -28,6 +29,16 @@ struct aurora_appconfig {
   /// CPUs of the AURORA publisher thread ("aurora_reset"). Empty uses the main thread pool CPUs
   /// (expert_execution.affinities.main_pool_cpus), so the publisher stays off the dedicated cores.
   os_sched_affinity_bitmask cpus;
+  /// E3 agent serving the AURORA_KPM service model to dApps (E3 Manager of NVIDIA aerial-sample-apps).
+  bool e3_enabled = false;
+  /// Bind address of the E3 sockets ("*" = all interfaces).
+  std::string e3_bind_address = "127.0.0.1";
+  /// E3 Manager setup requests (REQ/REP).
+  uint16_t e3_rep_port = 9990;
+  /// Indications and responses to the E3 Manager (PUB).
+  uint16_t e3_pub_port = 9991;
+  /// Subscription, control and release messages from the E3 Manager (SUB).
+  uint16_t e3_sub_port = 9999;
 };
 
 } // namespace app_services

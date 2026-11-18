@@ -13,3 +13,10 @@ aurora:
   thread_metrics_whitelist: ""    # Empty selects the OCUDU default thread list.
   anomaly_enabled: true           # Anomaly-injection TCP server on 127.0.0.1:(47010 + ran_type).
   # cpus: 15                      # CPUs of the aurora_reset publisher thread. Default: main_pool_cpus.
+  # E3 agent: serves the AURORA_KPM service model to dApps (NVIDIA aerial-sample-apps E3 Manager), see
+  # lib/aurora/e3/README.md. Use different ports for every process on the host.
+  e3_enable: false                # Enable the E3 agent (needs a build with ZeroMQ).
+  e3_bind_addr: 127.0.0.1         # Bind address of the E3 sockets ("*" = all interfaces).
+  e3_rep_port: 9990               # Setup requests (REQ/REP).
+  e3_pub_port: 9991               # Indications and responses (agent PUB).
+  e3_sub_port: 9999               # Subscription, control and release messages (agent SUB).

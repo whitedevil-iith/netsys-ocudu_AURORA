@@ -48,6 +48,13 @@ struct config {
   bool anomaly_enabled = true;
   /// CPUs the publisher thread ("aurora_reset") is pinned to. Empty leaves it unpinned.
   std::vector<unsigned> cpus;
+  /// E3 agent serving the AURORA_KPM service model to dApps (needs ZeroMQ at build time). Default ports are those of
+  /// the "OAI_L2" agent entry of the aerial-sample-apps e3_config.json; use distinct ports per process on a host.
+  bool        e3_enabled      = false;
+  std::string e3_bind_address = "127.0.0.1";
+  uint16_t    e3_rep_port     = 9990;
+  uint16_t    e3_pub_port     = 9991;
+  uint16_t    e3_sub_port     = 9999;
 };
 
 /// Default OCUDU thread whitelist (OS thread names created by worker_manager / io_broker / remote server).

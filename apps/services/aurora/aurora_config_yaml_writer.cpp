@@ -16,6 +16,11 @@ void app_services::fill_aurora_config_in_yaml_schema(YAML::Node& node, const aur
   sub["thread_metrics_backend"]     = config.thread_metrics_backend;
   sub["thread_metrics_whitelist"]   = config.thread_metrics_whitelist;
   sub["anomaly_enabled"]            = config.anomaly_enabled;
+  sub["e3_enable"]                  = config.e3_enabled;
+  sub["e3_bind_addr"]               = config.e3_bind_address;
+  sub["e3_rep_port"]                = config.e3_rep_port;
+  sub["e3_pub_port"]                = config.e3_pub_port;
+  sub["e3_sub_port"]                = config.e3_sub_port;
   if (config.cpus.any()) {
     sub["cpus"] = fmt::format("{:n}", span<const size_t>(config.cpus.get_cpu_ids()));
   }

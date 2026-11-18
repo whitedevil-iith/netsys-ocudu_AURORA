@@ -49,6 +49,11 @@ aurora::config app_services::to_aurora_config(const aurora_appconfig&          c
   out.thread_metrics_backend   = parse_backend(cfg.thread_metrics_backend);
   out.thread_metrics_whitelist = cfg.thread_metrics_whitelist;
   out.anomaly_enabled          = cfg.anomaly_enabled;
+  out.e3_enabled               = cfg.e3_enabled;
+  out.e3_bind_address          = cfg.e3_bind_address;
+  out.e3_rep_port              = cfg.e3_rep_port;
+  out.e3_pub_port              = cfg.e3_pub_port;
+  out.e3_sub_port              = cfg.e3_sub_port;
   for (size_t cpu : (cfg.cpus.any() ? cfg.cpus : default_cpus).get_cpu_ids()) {
     out.cpus.push_back(static_cast<unsigned>(cpu));
   }

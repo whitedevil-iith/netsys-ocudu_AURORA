@@ -3,6 +3,9 @@
 
 #include "anomaly/anomaly_module.h"
 #include "aurora_state.h"
+#ifdef AURORA_E3_ENABLED
+#include "e3/aurora_e3_agent.h"
+#endif
 #include <cerrno>
 #include <condition_variable>
 #include <cstdio>
@@ -31,6 +34,9 @@ std::mutex                            stop_mutex;
 std::condition_variable               stop_cv;
 bool                                  stop_requested = false;
 bool                                  thread_metrics_started = false;
+#ifdef AURORA_E3_ENABLED
+std::unique_ptr<e3::agent> e3_agent;
+#endif
 
 /// Pins the calling thread to \p cpus. Not fatal: an invalid set only leaves the thread unpinned.
 void pin_current_thread(const std::vector<unsigned>& cpus)
@@ -60,6 +66,12 @@ void publisher_loop(std::chrono::milliseconds period, std::vector<unsigned> cpus
   while (!stop_cv.wait_until(lock, next, [] { return stop_requested; })) {
     lock.unlock();
     detail::publish_interval(*detail::shm, *detail::state.load(std::memory_order_acquire));
+#ifdef AURORA_E3_ENABLED
+    // Same thread and same snapshot as the SysV-SHM readers see; stable until the next publish_interval().
+    if (e3_agent) {
+      e3_agent->on_interval(*detail::shm);
+    }
+#endif
     lock.lock();
     next += period;
     // Do not try to catch up after a stall (e.g. the process was suspended).
@@ -129,7 +141,7 @@ const char* aurora::default_thread_whitelist()
       // ocudu_phy_tap external processors and the libzmq background threads used by the ZMQ radio / PHY tap.
       "SRSIQDump,ULPhyTap,ZMQbg/*,"
       // AURORA itself.
-      "aurora_reset,"
+      "aurora_reset,aurora_e3,"
       // apps/examples (radio_ssb, radio_util_sample, rx_power_analyzer, ru_emulator).
       "async_thread,lower_phy,lower_phy_dl,lower_phy_ul,lower_phy_prach,low_rx,low_tx,low_dl,low_ul,"
       "ru_rx_#*,ru_emu_#*,ru_emulator,radio_ssb,radio_util_samp,rx_power_analyz";
@@ -177,6 +189,28 @@ int aurora::start(const config& cfg)
     }
   }
 
+  if (cfg.e3_enabled) {
+#ifdef AURORA_E3_ENABLED
+    static const char* const role_names[] = {"GNB", "DU", "CU", "CU_CP", "CU_UP"};
+    const int                role          = static_cast<int>(cfg.type);
+    e3::agent_config         ecfg;
+    ecfg.bind_address        = cfg.e3_bind_address;
+    ecfg.rep_port            = cfg.e3_rep_port;
+    ecfg.pub_port            = cfg.e3_pub_port;
+    ecfg.sub_port            = cfg.e3_sub_port;
+    ecfg.ran_identifier      = std::string("OCUDU_") + (role >= 0 && role < 5 ? role_names[role] : "RAN");
+    ecfg.collection_interval = cfg.collection_interval;
+    ecfg.cpus                = cfg.cpus;
+    e3_agent                 = std::make_unique<e3::agent>();
+    if (!e3_agent->start(ecfg)) {
+      std::fprintf(stderr, "AURORA: E3 agent failed to start, continuing without it\n");
+      e3_agent.reset();
+    }
+#else
+    std::fprintf(stderr, "AURORA: aurora.e3_enable is set but this build has no ZeroMQ, E3 agent disabled\n");
+#endif
+  }
+
   {
     std::lock_guard<std::mutex> lock(stop_mutex);
     stop_requested = false;
@@ -217,6 +251,13 @@ void aurora::stop()
   if (publisher.joinable()) {
     publisher.join();
   }
+#ifdef AURORA_E3_ENABLED
+  // After the publisher: no indication can be in flight any more.
+  if (e3_agent) {
+    e3_agent->stop();
+    e3_agent.reset();
+  }
+#endif
   if (thread_metrics_started) {
     aurora_thread_shutdown();
     thread_metrics_started = false;

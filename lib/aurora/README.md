@@ -31,6 +31,13 @@ The same options are available on the command line, for example `gnb ... aurora 
 - A stale segment left behind by a crashed process is replaced.
 - The segment is created with mode `0644`; readers attach it read-only.
 
+## E3 interface (dApps)
+
+With `e3_enable: true`, each process also runs an E3 agent. The agent serves the same snapshot to dApps of the NVIDIA
+dApp framework (aerial-sample-apps E3 Manager) as RAN function `100` (`AURORA_KPM`), next to the cuBB `NVIDIA_L1`
+agent. See [`e3/README.md`](e3/README.md) for the service model, the telemetry identifiers and the E3 Manager
+configuration.
+
 ## Reading
 
 `build/utils/aurora_reader/aurora_reader`:
@@ -470,6 +477,7 @@ They are injected on the data path. In OAI, the MAC/RLC/PDCP hooks ran in the ~1
 |------|----------------|
 | `tests/unittests/aurora/aurora_core_test` | Hook → publish semantics for every group |
 | `tests/unittests/aurora/aurora_e2e_test` | Publisher thread and procfs thread collector through the SysV segment |
+| `tests/unittests/aurora/aurora_e3_test` | `AURORA_KPM` encoding and an E3AP setup/subscribe/indication/release exchange |
 | `du_high_test --gtest_filter=*aurora*` | Scheduler, MAC, RLC and F1-U in a real DU-high UE flow |
 | `cu_up_test --gtest_filter=*aurora*` | Real N3 socket, GTP-U, PDCP |
 | `cu_cp_test --gtest_filter=*aurora*` | Inter-DU handover counters |
