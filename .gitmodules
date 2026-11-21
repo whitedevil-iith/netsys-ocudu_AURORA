@@ -1,7 +1,7 @@
 [submodule "plugins/aerial"]
 	path = plugins/aerial
 	url = https://github.com/whitedevil-iith/aerial_l1_ocudu_plugin.git
-	branch = main
+	branch = aurora-port
 
 [submodule "Metrics"]
 	path = Metrics
